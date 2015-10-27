@@ -1,0 +1,26 @@
+{
+  "name": "resume-linkedin",
+  "version": "0.5.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1",
+    "cookie-parser": "~1",
+    "debug": "~2",
+    "express": "~4",
+    "jade": "~1",
+    "morgan": "~1",
+    "resume-schema": "~0",
+    "serve-favicon": "~2",
+    "stylus": "~0"
+  },
+  "keywords": [
+    "json",
+    "resume",
+    "linkedin"
+  ],
+  "author": "Jeremy Brayton",
+  "license": "MIT"
+}
