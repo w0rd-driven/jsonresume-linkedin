@@ -1,7 +1,7 @@
-var config = require('./config'),
-  fs = require('fs'),
-  resumeSchema = require('resume-schema'),
-  log = require('debug')('resume');
+var config = require("./config"),
+  fs = require("fs"),
+  resumeSchema = require("resume-schema"),
+  log = require("debug")("resume");
 
 var data = {
   "basics": {
@@ -33,12 +33,12 @@ var data = {
 };
 
 function pad(n) {
-  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+  return n < 10 ? "0" + n.toString(10) : n.toString(10);
 }
 
 function timestamp() {
-  var d = new Date();
-  return [d.getUTCFullYear(), pad(d.getUTCMonth()), pad(d.getUTCDay())].join('-');
+  var date = new Date();
+  return [date.getUTCFullYear(), pad(date.getUTCMonth()), pad(date.getUTCDay())].join("-");
 }
 
 function createDate(dateObject, isCurrent) {
@@ -46,10 +46,10 @@ function createDate(dateObject, isCurrent) {
     return timestamp();
   }
   if (dateObject.day) {
-    return [dateObject.year, pad(dateObject.month), pad(dateObject.day)].join('-');
+    return [dateObject.year, pad(dateObject.month), pad(dateObject.day)].join("-");
   }
   if (dateObject.month) {
-    return [dateObject.year, pad(dateObject.month), "01"].join('-');
+    return [dateObject.year, pad(dateObject.month), "01"].join("-");
   }
   return String(dateObject.year + "-01-01");
 }
@@ -103,8 +103,8 @@ function createObject($in) {
     var collection = $in.phoneNumbers.values;
     if (collection) {
       for (i = 0, max = collection.length; i < max; i += 1) {
-        log('adding phone ' + collection[i].phoneType + ' ' + collection[i].phoneNumber);
-        data.basics['phone'][collection[i].phoneType] = collection[i].phoneNumber;
+        log("adding phone " + collection[i].phoneType + " " + collection[i].phoneNumber);
+        data.basics["phone"][collection[i].phoneType] = collection[i].phoneNumber;
       }
     }
   }
@@ -213,7 +213,7 @@ function createObject($in) {
     data["skills"].push(certifications);
   }
   if ($in.skills) {
-    var skills = createSkills($in.skills, config.skill_categories);
+    var skills = createSkills($in.skills, config.categories);
     //console.log(skills);
     data["skills"] = data["skills"].concat(skills);
   }
@@ -269,9 +269,9 @@ resumeSchema.validate(data, function (result, validationErr) {
     exitCode = 1;
   } else {
     var resumeString = JSON.stringify(data, undefined, 2);
-    console.log('Saving file resume.json:' + resumeString.length);
-    fs.writeFileSync(__dirname + '/resume.json', resumeString);
-    console.log('Done!');
+    console.log("Saving resume.json: " + resumeString.length);
+    fs.writeFileSync(__dirname + "/resume.json", resumeString);
+    console.log("Done!");
   }
   process.exit(exitCode);
 });
