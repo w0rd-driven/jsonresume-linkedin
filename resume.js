@@ -8,17 +8,9 @@ var data = {
     "name": "",
     "label": "",
     "picture": "",
-    "email": "",
     "phone": "",
     "website": "",
     "summary": "",
-    "location": {
-      "address": "",
-      "postalCode": "",
-      "city": "",
-      "countryCode": "",
-      "region": ""
-    },
     "profiles": []
   },
   "work": [],
@@ -97,7 +89,8 @@ function createObject($in) {
   // Picture
   data.basics.picture = $in.pictureUrl;
   // Email
-  data.basics.email = $in.emailAddress;
+  if (data.basics.email)
+    data.basics.email = $in.emailAddress;
   // Phone number(s)
   if ($in.phoneNumbers) {
     var collection = $in.phoneNumbers.values;
@@ -113,9 +106,10 @@ function createObject($in) {
     data.basics.summary = $in.summary;
   }
   // Location
-  if ($in.mainAddress) {
+  if (data.basics.location)
+    if ($in.mainAddress) {
 
-  }
+    }
   // Profiles
   // LinkedIn
   if ($in.publicProfileUrl) {
