@@ -14,7 +14,7 @@ var categories = [
     skills: ["FP", "OOP", "BDD", "TDD", "CI", "DI", "Mocks", "REST", "ORM"]
   },
   {
-  category: "Web Development",
+    category: "Web Development",
     level: "Intermediate",
     skills: ["HTML", "Javascript", "CSS", "jQuery", "Bootstrap", "Bower", "Gulp", "Node", "ASP.NET MVC", "WCF", "IIS", "Apache", "MySQL", "PHP", "Slim Framework", "Laravel", "XML"]
   },
