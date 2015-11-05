@@ -1,12 +1,15 @@
-var config = require('./config');
+var config = require("./config");
 
 function getUrl() {
-  var parameters = "people/~:(" + config.api_fields.join(',') + ")";
+  var parameters = "people/~:(" + config.api.fields.join(',') + ")";
   //console.log("parameters: " + parameters);
-  return config.api_url + parameters + "?format=" + config.api_format;
+  return config.api.url + parameters + "?format=" + config.api.format;
 }
 
 var url = getUrl();
 console.log(url);
 
-module.exports = url;
+module.exports = {
+  url: url,
+  getUrl: getUrl()
+};
