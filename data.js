@@ -1,3 +1,3 @@
-module.exports = {
+var linkedIn = {};
 
-};
+module.exports = linkedIn;
