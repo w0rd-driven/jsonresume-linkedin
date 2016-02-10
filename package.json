@@ -2,7 +2,6 @@
   "name": "jsonresume-linkedin",
   "version": "1.0.3",
   "description": "Converts LinkedIn API results to a lightly opinionated JSON Résumé output.",
-  "main": "resume.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/w0rd-driven/jsonresume-linkedin.git"
