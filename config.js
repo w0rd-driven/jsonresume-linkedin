@@ -16,7 +16,7 @@ var categories = [
   {
     category: "Web Development",
     level: "Intermediate",
-    skills: ["HTML", "Javascript", "CSS", "jQuery", "Bootstrap", "Bower", "Gulp", "Node", "ASP.NET MVC", "WCF", "IIS", "Apache", "MySQL", "PHP", "Slim Framework", "Laravel", "XML"]
+    skills: ["HTML5", "Javascript", "CSS", "jQuery", "Bootstrap", "Bower", "Gulp", "Node.js", "ASP.NET MVC", "WCF", "IIS", "Apache", "MySQL", "PHP", "Slim Framework", "Laravel", "XML"]
   },
   {
     category: "Application Development",
@@ -35,7 +35,7 @@ var categories = [
   {
     category: "Programming",
     level: "Intermediate",
-    skills: ["C#", "JavaScript", "PHP", "SQL"]
+    skills: ["C#", "Javascript", "PHP", "SQL"]
   }
 ];
 
