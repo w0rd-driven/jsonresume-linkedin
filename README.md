@@ -41,13 +41,13 @@ npm install jsonresume-linkedin ; cd jsonresume-linkedin
 
 ### config.js
 
-Configuration objects for the [fields.js](#fields.js) module, skills category mapping, and the [data.js](#data.js) module
+Configuration objects for the [fields.js](#fields.js) module, skills category mapping, and the [data.js](#data.js) module.
 
 #### Skills categories
 
 An array of category objects defined by `category`, `level`, and array of `skills`.
 
-*This is just a different representation of the existing schema for skills*
+*This is just a different representation of the existing schema for skills*.
 
 ### data.js
 
@@ -60,7 +60,7 @@ Prints the LinkedIn API request to return a full profile with only the configure
 Utilizes the [config.js](#config.js) to build the full url as `config.api.url + parameters + "?format=" + config.api.format`.
 
 This is gathered from [https://developer.linkedin.com/docs/signin-with-linkedin](https://developer.linkedin.com/docs/signin-with-linkedin) 
-under the section marked **Requesting additional profile fields**.
+under the section marked `Requesting additional profile fields`.
 
 ### resume.js
 
