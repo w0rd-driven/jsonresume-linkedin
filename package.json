@@ -3,15 +3,23 @@
   "version": "1.0.1",
   "description": "Converts LinkedIn API results to a lightly opinionated JSON Résumé output.",
   "main": "resume.js",
-  "dependencies": {
-    "debug": "~2",
-    "resume-schema": "~0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/w0rd-driven/jsonresume-linkedin.git"
   },
   "keywords": [
     "json",
     "resume",
     "linkedin"
   ],
-  "author": "Jeremy Brayton",
-  "license": "MIT"
+  "author": "Jeremy Brayton <jeremy@braytonium.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/w0rd-driven/jsonresume-linkedin/issues"
+  },
+  "homepage": "https://github.com/w0rd-driven/jsonresume-linkedin#readme",
+  "dependencies": {
+    "debug": "~2",
+    "resume-schema": "~0"
+  }
 }

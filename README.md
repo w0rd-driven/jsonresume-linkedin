@@ -1,19 +1,31 @@
-# LinkedIn to JSON Resume importer
+# LinkedIn to JSON Résumé conversion
 
-Inspired by the deprecated https://github.com/mblarsen/resume-linkedin. The deprecation was due to 
+Inspired by https://github.com/mblarsen/resume-linkedin. The package was deprecated primarily due to 
 [these changes](https://developer.linkedin.com/blog/posts/2015/developer-program-changes) in the LinkedIn API.
 
-I found that the developer console, supplied with the right API request, can produce the data necessary to produce a 
-JSON resume.
+Through investigation I found that the developer console, supplied with the right API request, can return the 
+data necessary to generate a working JSON résumé.
 
 The resulting `resume.json` is lightly opinionated but relatively straightforward ([see here for a basic mapping guide](#field-mapping)). 
 
-There is one unique addition: The skills category mapping from [config.js](#config.js) maps a JSON resume skill 
+There is one unique addition: The skills category mapping from [config.js](#config.js) maps a JSON résumé skill 
 definition more as a broad category. For instance, the `Web Development` category lists keywords refining that category, 
 like `"HTML5", "Javascript", "CSS"`. The `Certifications` category is reserved for the certifications listed in LinkedIn 
 and always the first listed to hopefully make it stand out.
 
-## Instructions
+## Installation
+
+```
+git clone https://github.com/w0rd-driven/jsonresume-linkedin
+```
+
+or
+
+```
+npm install jsonresume-linkedin ; cd jsonresume-linkedin
+```
+
+## Usage
 
 1. Go to [https://developer.linkedin.com/rest-console](https://developer.linkedin.com/rest-console) in your browser 
 (redirects to [https://apigee.com/console/linkedin](https://apigee.com/console/linkedin)) 
@@ -52,7 +64,7 @@ under the section marked **Requesting additional profile fields**.
 
 ### resume.js
 
-Convert the LinkedIn API JSON data ([data.js](#data.js)) into the `resume.json` JSON resume output. 
+Converts the LinkedIn API data ([data.js](#data.js)) into the `resume.json` JSON résumé. 
 
 ## Field mapping
 
