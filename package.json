@@ -18,7 +18,11 @@
   },
   "homepage": "https://github.com/w0rd-driven/jsonresume-linkedin#readme",
   "dependencies": {
+    "commander": "~2",
     "debug": "~2",
     "resume-schema": "~0"
+  },
+  "bin": {
+    "jsonresume-linkedin": "./index.js"
   }
 }
