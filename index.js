@@ -51,7 +51,7 @@ program
   .option('-d, --data <path/to/data.json>', 'set data definition. defaults to ./data.json')
   .action(function(options) {
     var categories = options.categories || "categories.json";
-    var data = options.data || "./data.json";
+    var data = options.data || "data.json";
     console.log('Looking for categories in %s, data in %s', categories, data);
   });
 
