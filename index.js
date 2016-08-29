@@ -4,11 +4,20 @@
  * Created by Jeremy Brayton on 8/28/16.
  */
 var program = require('commander');
-var fs = require('fs');
 var jsonfile = require('jsonfile');
+var path = require('path');
 
 function increaseVerbosity(v, total) {
   return total < 3 ? total + 1 : 3;
+}
+
+function getFilePath(fileName) {
+  var result = fileName;
+  var pathInfo = path.parse(fileName);
+  if (!pathInfo.dir) {
+    result = path.join(__dirname, fileName);
+  }
+  return result;
 }
 
 program
@@ -21,11 +30,11 @@ program
   .option('-v, --verbose', 'Increase the verbosity of messages: 1 for normal output, 2 for more verbose' +
     ' output and 3 for debug', increaseVerbosity, 0)
   .action(function(options) {
-    var configFile = options.config || "/api.json";
+    var configFile = options.config || "api.json";
     // var verbose = options.verbose || 0;
     // console.log(verbose);
     // console.log('Looking for config in %s', configFile);
-    var filePath = __dirname + configFile;
+    var filePath = getFilePath(configFile);
     jsonfile.readFile(filePath, function(error, config) {
       var parameters = "people/~:(" + config.fields.join(',') + ")";
       // console.log("parameters: " + parameters);
