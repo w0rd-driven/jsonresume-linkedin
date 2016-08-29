@@ -4,6 +4,12 @@
  * Created by Jeremy Brayton on 8/28/16.
  */
 var program = require('commander');
+var fs = require('fs');
+var jsonfile = require('jsonfile');
+
+function increaseVerbosity(v, total) {
+  return total < 3 ? total + 1 : 3;
+}
 
 program
   .version('2.0.0');
@@ -11,10 +17,21 @@ program
 program
   .command('url')
   .description('Generate the url to gather data from LinkedIn\'s API console')
-  .option('-c, --config <path/to/api.json>', 'set config definition. defaults to api.json')
+  .option('-c, --config <path/to/api.json>', 'Set config definition. Defaults to api.json.')
+  .option('-v, --verbose', 'Increase the verbosity of messages: 1 for normal output, 2 for more verbose' +
+    ' output and 3 for debug', increaseVerbosity, 0)
   .action(function(options) {
-    var config = options.config || "api.json";
-    console.log('Looking for config in %s', config);
+    var configFile = options.config || "/api.json";
+    // var verbose = options.verbose || 0;
+    // console.log(verbose);
+    // console.log('Looking for config in %s', configFile);
+    var filePath = __dirname + configFile;
+    jsonfile.readFile(filePath, function(error, config) {
+      var parameters = "people/~:(" + config.fields.join(',') + ")";
+      // console.log("parameters: " + parameters);
+      var url = config.url + parameters + "?format=" + config.format;
+      console.log(url);
+    });
   });
 
 program
@@ -29,5 +46,4 @@ program
     console.log('Looking for categories in %s, data in %s', categories, data);
   });
 
-program.parse(process.argv);
-program.help();
+var parsedArguments = program.parse(process.argv);

@@ -20,6 +20,7 @@
   "dependencies": {
     "commander": "~2",
     "debug": "~2",
+    "jsonfile": "~2",
     "resume-schema": "~0"
   },
   "bin": {
