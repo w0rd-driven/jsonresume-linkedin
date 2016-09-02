@@ -5,6 +5,7 @@
  */
 var program = require('commander'),
   jsonfile = require('jsonfile'),
+  fs = require('fs'),
   path = require('path'),
   sh = require('shelljs'),
   resume = require('./resume');
@@ -13,13 +14,26 @@ function increaseVerbosity(v, total) {
   return total < 3 ? total + 1 : 3;
 }
 
-function getFilePath(fileName, isCurrentDirectory) {
-  var isCurrentDirectory = typeof isCurrentDirectory !== 'undefined' ?  isCurrentDirectory : false;
+function getFilePath(fileName, type) {
   var result = fileName;
   var pathInfo = path.parse(fileName);
-  var directory = isCurrentDirectory ? sh.pwd().toString() : __dirname;
+
   if (!pathInfo.dir) {
-    result = path.join(directory, fileName);
+    switch (type) {
+      case "current":
+        result = path.join(sh.pwd().toString(), fileName);
+        if (!fs.existsSync(result)) {
+          result = path.join(__dirname, fileName);
+        }
+        break;
+      case "output":
+        result = path.join(sh.pwd().toString(), fileName);
+        break;
+      case "package":
+      default:
+        result = path.join(__dirname, fileName);
+        break;
+    }
   }
   return result;
 }
@@ -51,10 +65,15 @@ program
   .command('import')
   //.arguments('<path/to/data.json>') // This becomes required
   .description('Generate resume.json from LinkedIn API data')
-  .option('-c, --categories <path/to/categories.json>', 'Set categories definition. Defaults to categories.json')
+  .option('-c, --categories <path/to/categories.json>', 'Set categories definition. Defaults to ./categories.json')
   .option('-d, --data <path/to/data.json>', 'Set data definition. Defaults to ./data.json')
   .option('-o, --output <path/to/resume.json>', 'Set output definition. Defaults to ./resume.json')
   .action(function(options) {
+    var type = {
+      current: "current",
+      package: "package",
+      output: "output"
+    };
     var categoriesFile = options.categories || "categories.json";
     var dataFile = options.data || "data.json";
     var outputFile = options.output || "resume.json";
@@ -62,10 +81,10 @@ program
     var templateFile = "template.json";
     // console.log('Looking for categories in %s, data in %s, output in %s, template in %s', categoriesFile, dataFile,
     //   outputFile, templateFile);
-    var categoriesFilePath = getFilePath(categoriesFile);
-    var dataFilePath = getFilePath(dataFile, true);
-    var templateFilePath = getFilePath(templateFile);
-    var outputFilePath = getFilePath(outputFile, true);
+    var categoriesFilePath = getFilePath(categoriesFile, type.current);
+    var dataFilePath = getFilePath(dataFile, type.current);
+    var templateFilePath = getFilePath(templateFile, type.package);
+    var outputFilePath = getFilePath(outputFile, type.output);
 
     var categories = jsonfile.readFileSync(categoriesFilePath);
     var data = jsonfile.readFileSync(dataFilePath);
