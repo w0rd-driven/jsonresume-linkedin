@@ -3,19 +3,23 @@
 /**
  * Created by Jeremy Brayton on 8/28/16.
  */
-var program = require('commander');
-var jsonfile = require('jsonfile');
-var path = require('path');
+var program = require('commander'),
+  jsonfile = require('jsonfile'),
+  path = require('path'),
+  sh = require('shelljs'),
+  resume = require('./resume');
 
 function increaseVerbosity(v, total) {
   return total < 3 ? total + 1 : 3;
 }
 
-function getFilePath(fileName) {
+function getFilePath(fileName, isCurrentDirectory) {
+  var isCurrentDirectory = typeof isCurrentDirectory !== 'undefined' ?  isCurrentDirectory : false;
   var result = fileName;
   var pathInfo = path.parse(fileName);
+  var directory = isCurrentDirectory ? sh.pwd().toString() : __dirname;
   if (!pathInfo.dir) {
-    result = path.join(__dirname, fileName);
+    result = path.join(directory, fileName);
   }
   return result;
 }
@@ -47,12 +51,26 @@ program
   .command('import')
   //.arguments('<path/to/data.json>') // This becomes required
   .description('Generate resume.json from LinkedIn API data')
-  .option('-c, --categories <path/to/categories.json>', 'set categories definition. defaults to categories.json')
-  .option('-d, --data <path/to/data.json>', 'set data definition. defaults to ./data.json')
+  .option('-c, --categories <path/to/categories.json>', 'Set categories definition. Defaults to categories.json')
+  .option('-d, --data <path/to/data.json>', 'Set data definition. Defaults to ./data.json')
+  .option('-o, --output <path/to/resume.json>', 'Set output definition. Defaults to ./resume.json')
   .action(function(options) {
-    var categories = options.categories || "categories.json";
-    var data = options.data || "data.json";
-    console.log('Looking for categories in %s, data in %s', categories, data);
+    var categoriesFile = options.categories || "categories.json";
+    var dataFile = options.data || "data.json";
+    var outputFile = options.output || "resume.json";
+    // var verbose = options.verbose || 0;
+    var templateFile = "template.json";
+    // console.log('Looking for categories in %s, data in %s, output in %s, template in %s', categoriesFile, dataFile,
+    //   outputFile, templateFile);
+    var categoriesFilePath = getFilePath(categoriesFile);
+    var dataFilePath = getFilePath(dataFile, true);
+    var templateFilePath = getFilePath(templateFile);
+    var outputFilePath = getFilePath(outputFile, true);
+
+    var categories = jsonfile.readFileSync(categoriesFilePath);
+    var data = jsonfile.readFileSync(dataFilePath);
+    var template = jsonfile.readFileSync(templateFilePath);
+    resume.convert(data, template, categories, outputFilePath);
   });
 
 var parsedArguments = program.parse(process.argv);

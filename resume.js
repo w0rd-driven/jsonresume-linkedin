@@ -1,28 +1,6 @@
-var config = require("./config"),
-  fs = require("fs"),
+var fs = require("fs"),
   resumeSchema = require("resume-schema"),
   log = require("debug")("resume");
-
-var data = {
-  "basics": {
-    "name": "",
-    "label": "",
-    "picture": "",
-    "phone": "",
-    "website": "",
-    "summary": "",
-    "profiles": []
-  },
-  "work": [],
-  "volunteer": [],
-  "education": [],
-  "awards": [],
-  "publications": [],
-  "skills": [],
-  "languages": [],
-  "interests": [],
-  "references": []
-};
 
 function pad(n) {
   return n < 10 ? "0" + n.toString(10) : n.toString(10);
@@ -33,31 +11,31 @@ function timestamp() {
   return [date.getUTCFullYear(), pad(date.getUTCMonth()), pad(date.getUTCDay())].join("-");
 }
 
-function createDate(dateObject, isCurrent) {
+function createDate(date, isCurrent) {
   if (isCurrent !== undefined && isCurrent.valueOf() === true) {
     return timestamp();
   }
-  if (dateObject.day) {
-    return [dateObject.year, pad(dateObject.month), pad(dateObject.day)].join("-");
+  if (date.day) {
+    return [date.year, pad(date.month), pad(date.day)].join("-");
   }
-  if (dateObject.month) {
-    return [dateObject.year, pad(dateObject.month), "01"].join("-");
+  if (date.month) {
+    return [date.year, pad(date.month), "01"].join("-");
   }
-  return String(dateObject.year + "-01-01");
+  return String(date.year + "-01-01");
 }
 
-function createCertifications($certifications) {
+function createCertifications(certifications) {
   return {
     name: "Certifications",
-    keywords: $certifications.values.map(function (object) {
+    keywords: certifications.values.map(function (object) {
       return object.name;
     })
   };
 }
 
-function createSkills($skills, $categories) {
-  // TODO: Correlate LinkedIn $skills object with $categories array
-  return $categories.map(function (object) {
+function createSkills(skills, categories) {
+  // TODO: Correlate LinkedIn skills object with categories array
+  return categories.map(function (object) {
     log("adding category " + object.category);
     if (object.level) {
       return {
@@ -74,63 +52,65 @@ function createSkills($skills, $categories) {
   });
 }
 
-function getLinkedInUserName($publicProfileUrl) {
-  return $publicProfileUrl.replace(/https:\/\/www\.linkedin\.com\/in\//, "");
+function getLinkedInUserName(publicProfileUrl) {
+  return publicProfileUrl.replace(/https:\/\/www\.linkedin\.com\/in\//, "");
 }
 
-function createObject($in) {
+function mapObject(linkedIn, template, categories) {
   log("creating resume");
+  var output = template;
+
   // Name
-  data.basics.name = $in.formattedName;
+  output.basics.name = linkedIn.formattedName;
   // Label
-  if ($in.headline) {
-    data.basics.label = $in.headline;
+  if (linkedIn.headline) {
+    output.basics.label = linkedIn.headline;
   }
   // Picture
-  data.basics.picture = $in.pictureUrl;
+  output.basics.picture = linkedIn.pictureUrl;
   // Email
-  if (data.basics.email)
-    data.basics.email = $in.emailAddress;
+  if (output.basics.email)
+    output.basics.email = linkedIn.emailAddress;
   // Phone number(s)
-  if ($in.phoneNumbers) {
-    var collection = $in.phoneNumbers.values;
+  if (linkedIn.phoneNumbers) {
+    var collection = linkedIn.phoneNumbers.values;
     if (collection) {
       for (i = 0, max = collection.length; i < max; i += 1) {
         log("adding phone " + collection[i].phoneType + " " + collection[i].phoneNumber);
-        data.basics["phone"][collection[i].phoneType] = collection[i].phoneNumber;
+        output.basics["phone"][collection[i].phoneType] = collection[i].phoneNumber;
       }
     }
   }
   // Summary
-  if ($in.summary) {
-    data.basics.summary = $in.summary;
+  if (linkedIn.summary) {
+    output.basics.summary = linkedIn.summary;
   }
   // Location
-  if (data.basics.location)
-    if ($in.mainAddress) {
+  if (output.basics.location)
+    if (linkedIn.mainAddress) {
 
     }
   // Profiles
   // LinkedIn
-  if ($in.publicProfileUrl) {
-    data.basics.profiles.push({
+  if (linkedIn.publicProfileUrl) {
+    output.basics.profiles.push({
       "network": "LinkedIn",
-      "username": getLinkedInUserName($in.publicProfileUrl),
-      "url": $in.publicProfileUrl
+      "username": getLinkedInUserName(linkedIn.publicProfileUrl),
+      "url": linkedIn.publicProfileUrl
     });
   }
   // Twitter
-  if ($in.primaryTwitterAccount) {
-    data.basics.profiles.push({
+  if (linkedIn.primaryTwitterAccount) {
+    output.basics.profiles.push({
       "network": "Twitter",
-      "username": $in.primaryTwitterAccount.providerAccountName,
+      "username": linkedIn.primaryTwitterAccount.providerAccountName,
       // TODO: Create this url better
-      "url": "http://twitter.com/" + $in.primaryTwitterAccount.providerAccountName
+      "url": "http://twitter.com/" + linkedIn.primaryTwitterAccount.providerAccountName
     });
   }
   // Work
-  if ($in.positions) {
-    data["work"] = $in.positions.values.map(function (object) {
+  if (linkedIn.positions) {
+    output["work"] = linkedIn.positions.values.map(function (object) {
       log("adding work " + object.company.name);
       var highlights = [];
       if (object.summary) {
@@ -161,8 +141,8 @@ function createObject($in) {
   }
   // Volunteer
   // Education
-  if ($in.educations) {
-    data["education"] = $in.educations.values.map(function (object) {
+  if (linkedIn.educations) {
+    output["education"] = linkedIn.educations.values.map(function (object) {
       log("adding education " + object.schoolName);
       return {
         institution: object.schoolName,
@@ -176,8 +156,8 @@ function createObject($in) {
     });
   }
   // Awards
-  if ($in.honorsAwards) {
-    data["awards"] = $in.honorsAwards.values.map(function (object) {
+  if (linkedIn.honorsAwards) {
+    output["awards"] = linkedIn.honorsAwards.values.map(function (object) {
       log("adding award " + object.name);
       return {
         title: object.name,
@@ -188,8 +168,8 @@ function createObject($in) {
     });
   }
   // Publications
-  if ($in.publications) {
-    data["publications"] = $in.publications.values.map(function (object) {
+  if (linkedIn.publications) {
+    output["publications"] = linkedIn.publications.values.map(function (object) {
       log("adding publication " + object.title);
       return {
         name: object.title,
@@ -200,20 +180,20 @@ function createObject($in) {
     });
   }
   // Skills
-  if ($in.certifications) {
-    var certifications = createCertifications($in.certifications);
+  if (linkedIn.certifications) {
+    var certifications = createCertifications(linkedIn.certifications);
     log("adding certifications as a skill entry");
     //console.log(certifications);
-    data["skills"].push(certifications);
+    output["skills"].push(certifications);
   }
-  if ($in.skills) {
-    var skills = createSkills($in.skills, config.categories);
+  if (linkedIn.skills) {
+    var skills = createSkills(linkedIn.skills, categories);
     //console.log(skills);
-    data["skills"] = data["skills"].concat(skills);
+    output["skills"] = output["skills"].concat(skills);
   }
   // Languages
-  if ($in.languages) {
-    data["languages"] = $in.languages.values.map(function (object) {
+  if (linkedIn.languages) {
+    output["languages"] = linkedIn.languages.values.map(function (object) {
       log("adding language" + object.language.name);
       return {
         name: object.language.name,
@@ -223,8 +203,8 @@ function createObject($in) {
     });
   }
   // Interests
-  if ($in.interests) {
-    data["interests"] = $in.interests.split("\n").map(function (object) {
+  if (linkedIn.interests) {
+    output["interests"] = linkedIn.interests.split("\n").map(function (object) {
       var name = object.replace(/,\s*$/, "");
       log("adding interest" + name);
       return {
@@ -233,8 +213,8 @@ function createObject($in) {
     });
   }
   // References
-  if ($in.recommendationsReceived) {
-    data["references"] = $in.recommendationsReceived.values.map(function (object) {
+  if (linkedIn.recommendationsReceived) {
+    output["references"] = linkedIn.recommendationsReceived.values.map(function (object) {
       log("adding reference from " + object.recommender.firstName + " " + object.recommender.lastName);
       return {
         name: object.recommender.firstName + " " + object.recommender.lastName,
@@ -243,29 +223,34 @@ function createObject($in) {
     });
   }
 
-  return data;
+  return output;
 }
 
-$in = config.data;
-//req.session.$in = $in;
-//console.error(JSON.stringify($in));
-data = createObject($in);
-//console.error(data);
+function convert(data, template, categories, outputFile) {
+  console.error(JSON.stringify(data));
 
-//var resumeString = JSON.stringify(data, undefined, 2);
-//console.error(resumeString);
+  var output = mapObject(data, template, categories);
+  // console.error(output);
 
-resumeSchema.validate(data, function (result, validationErr) {
-  var exitCode = 0;
-  if (validationErr || result.valid !== true) {
-    console.error(validationErr);
-    console.error(result);
-    exitCode = 1;
-  } else {
-    var resumeString = JSON.stringify(data, undefined, 2);
-    console.log("Saving resume.json: " + resumeString.length);
-    fs.writeFileSync(__dirname + "/resume.json", resumeString);
-    console.log("Done!");
-  }
-  process.exit(exitCode);
-});
+  // var resumeString = JSON.stringify(output, undefined, 2);
+  // console.error(resumeString);
+
+  resumeSchema.validate(output, function (result, error) {
+    var exitCode = 0;
+    if (error || result.valid !== true) {
+      console.error(error);
+      console.error(result);
+      exitCode = 1;
+    } else {
+      var resumeString = JSON.stringify(output, undefined, 2);
+      console.log("Saving resume.json: " + resumeString.length);
+      fs.writeFileSync(outputFile, resumeString);
+      console.log("Done!");
+    }
+    process.exit(exitCode);
+  });
+}
+
+module.exports = {
+  convert: convert
+};
