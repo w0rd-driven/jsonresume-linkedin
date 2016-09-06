@@ -83,7 +83,7 @@ program
     //   outputFile, templateFile);
     var categoriesFilePath = getFilePath(categoriesFile, type.current);
     var dataFilePath = getFilePath(dataFile, type.current);
-    var templateFilePath = getFilePath(templateFile, type.package);
+    var templateFilePath = getFilePath(templateFile);
     var outputFilePath = getFilePath(outputFile, type.output);
 
     var categories = jsonfile.readFileSync(categoriesFilePath);
